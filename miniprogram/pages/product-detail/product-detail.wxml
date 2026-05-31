@@ -1,0 +1,32 @@
+<view class="container" wx:if="{{product}}">
+  <image class="detail-img" src="{{product.imageUrl || '/static/images/default-product.png'}}" mode="aspectFill" />
+
+  <view class="detail-info card">
+    <view class="detail-price">
+      <text class="price">¥{{product.price}}</text>
+      <text class="original-price" wx:if="{{product.originalPrice}}">¥{{product.originalPrice}}</text>
+    </view>
+    <text class="detail-name">{{product.name}}</text>
+    <view class="detail-meta">
+      <text>分类：{{product.categoryName}}</text>
+      <text>单位：{{product.unit}}</text>
+      <text wx:if="{{product.stockQuantity !== null}}">库存：{{product.stockQuantity}}</text>
+    </view>
+  </view>
+
+  <view class="detail-desc card" wx:if="{{product.description}}">
+    <text class="section-title">商品详情</text>
+    <text class="desc-text">{{product.description}}</text>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="quantity-picker">
+      <view class="qty-btn" bindtap="onQuantityChange" data-type="minus">-</view>
+      <text class="qty-num">{{quantity}}</text>
+      <view class="qty-btn" bindtap="onQuantityChange" data-type="plus">+</view>
+    </view>
+    <view class="btn-outline" bindtap="addToCart">加入购物车</view>
+    <view class="btn-primary" bindtap="buyNow">立即购买</view>
+  </view>
+</view>

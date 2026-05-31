@@ -1,0 +1,20 @@
+<view class="container">
+  <text style="font-size:32rpx;font-weight:bold;display:block;margin-bottom:20rpx;">商品管理</text>
+
+  <view wx:if="{{products.length === 0}}" class="empty-tip">暂无商品</view>
+
+  <view class="card" wx:for="{{products}}" wx:key="id">
+    <view class="flex-between">
+      <view style="flex:1;">
+        <text style="font-weight:bold;">{{item.name}}</text>
+        <text style="font-size:24rpx;color:#999;display:block;margin-top:8rpx;">分类: {{item.categoryName}} | 状态: {{item.status === 'ON_SALE' ? '上架' : '下架'}}</text>
+      </view>
+      <text class="price">¥{{item.price}}</text>
+    </view>
+    <view class="flex-between" style="margin-top:16rpx;">
+      <text style="font-size:24rpx;color:#999;">库存: {{item.stockQuantity || 0}}</text>
+      <view class="btn-outline" style="font-size:24rpx;padding:6rpx 20rpx;color:#e64340;border-color:#e64340;"
+            bindtap="deleteProduct" data-id="{{item.id}}">删除</view>
+    </view>
+  </view>
+</view>

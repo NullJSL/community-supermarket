@@ -1,0 +1,44 @@
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="user-card card">
+    <view wx:if="{{userInfo}}">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/static/images/default-avatar.png'}}" />
+      <text class="nickname">{{userInfo.nickname || '微信用户'}}</text>
+      <text class="user-role" wx:if="{{isAdmin}}">管理员</text>
+    </view>
+    <view wx:else class="login-prompt" bindtap="login">
+      <text>点击登录</text>
+    </view>
+  </view>
+
+  <!-- 用户菜单 -->
+  <view class="menu-section card" wx:if="{{userInfo}}">
+    <view class="menu-item" bindtap="goToOrders">
+      <text>我的订单</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 管理员菜单 -->
+  <view class="menu-section card" wx:if="{{isAdmin}}">
+    <text class="menu-title">管理功能</text>
+    <view class="menu-item" bindtap="goToAdminOrders">
+      <text>订单管理</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToInventory">
+      <text>库存管理</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToProductManage">
+      <text>商品管理</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToSalesReport">
+      <text>销售报表</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <view class="logout-btn" wx:if="{{userInfo}}" bindtap="logout">退出登录</view>
+</view>

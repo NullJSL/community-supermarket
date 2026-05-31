@@ -1,0 +1,57 @@
+.status-card {
+  text-align: center;
+  background: #07c160;
+  color: white;
+}
+
+.status-text {
+  font-size: 40rpx;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.order-no-text {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.info-row {
+  padding: 12rpx 0;
+  font-size: 28rpx;
+}
+
+.label {
+  color: #999;
+}
+
+.order-item-row {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.item-name { flex: 1; }
+.item-qty { color: #999; margin: 0 24rpx; }
+
+.total-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 20rpx;
+  gap: 8rpx;
+}
+
+.action-bar {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 30rpx;
+}

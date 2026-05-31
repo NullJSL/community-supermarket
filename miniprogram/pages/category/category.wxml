@@ -1,0 +1,26 @@
+<view class="category-page">
+  <!-- 左侧分类列表 -->
+  <scroll-view class="category-left" scroll-y>
+    <view wx:for="{{categories}}" wx:key="id"
+          class="category-left-item {{currentIndex === index ? 'active' : ''}}"
+          bindtap="onCategoryTap" data-index="{{index}}">
+      {{item.name}}
+    </view>
+  </scroll-view>
+
+  <!-- 右侧商品列表 -->
+  <scroll-view class="category-right" scroll-y>
+    <view wx:if="{{products.length === 0 && !loading}}" class="empty-tip">暂无商品</view>
+    <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <image class="product-img" src="{{item.imageUrl || '/static/images/default-product.png'}}" mode="aspectFill" />
+      <view class="product-info">
+        <text class="product-name">{{item.name}}</text>
+        <text class="product-desc">{{item.description}}</text>
+        <view class="flex-between">
+          <text class="price">¥{{item.price}}<text class="unit">/{{item.unit}}</text></text>
+          <view class="add-btn" catchtap="addToCart" data-product="{{item}}">+</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

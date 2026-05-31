@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="status"
+          class="tab-item {{currentTab === index ? 'active' : ''}}"
+          bindtap="onTabChange" data-index="{{index}}">{{item.label}}</view>
+  </view>
+
+  <view wx:if="{{orders.length === 0}}" class="empty-tip">暂无订单</view>
+
+  <view class="order-card card" wx:for="{{orders}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+    <view class="order-header flex-between">
+      <text class="order-no">{{item.orderNo}}</text>
+      <text class="order-status">{{item.status === 'PAID' ? '待配送' : item.status === 'DELIVERING' ? '配送中' : item.status === 'COMPLETED' ? '已完成' : item.status === 'CANCELLED' ? '已取消' : '待付款'}}</text>
+    </view>
+    <view class="order-items">
+      <view class="order-item-row" wx:for="{{item.items}}" wx:for-item="oi" wx:key="id">
+        <text>{{oi.productName}} x{{oi.quantity}}</text>
+        <text class="price">¥{{oi.subtotal}}</text>
+      </view>
+    </view>
+    <view class="order-footer flex-between">
+      <text class="order-time">{{item.createTime}}</text>
+      <text>合计：<text class="price">¥{{item.totalAmount}}</text></text>
+    </view>
+  </view>
+</view>
