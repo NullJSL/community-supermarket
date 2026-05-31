@@ -1,0 +1,42 @@
+<view class="container">
+  <!-- 日期选择 -->
+  <view class="card flex-between">
+    <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+      <text>开始: {{startDate}}</text>
+    </picker>
+    <text>~</text>
+    <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
+      <text>结束: {{endDate}}</text>
+    </picker>
+  </view>
+
+  <!-- 概览 -->
+  <view wx:if="{{report}}" class="card">
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-value price">¥{{report.totalRevenue || '0.00'}}</text>
+        <text class="stat-label">总营收</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{report.totalQuantitySold || 0}}</text>
+        <text class="stat-label">销售量</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{report.totalOrders || 0}}</text>
+        <text class="stat-label">订单数</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 每日销售 -->
+  <view wx:if="{{report && report.dailySales}}" class="card">
+    <text style="font-weight:bold;display:block;margin-bottom:16rpx;">每日销售</text>
+    <view wx:for="{{report.dailySales}}" wx:key="date" class="daily-row">
+      <text>{{item.date}}</text>
+      <text>{{item.quantity}}件</text>
+      <text class="price">¥{{item.revenue}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!report}}" class="empty-tip">暂无数据</view>
+</view>

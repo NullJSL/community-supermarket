@@ -1,0 +1,144 @@
+-- 用户表
+CREATE TABLE IF NOT EXISTS t_user (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    openid VARCHAR(64) DEFAULT NULL COMMENT '微信openid',
+    nickname VARCHAR(64) DEFAULT NULL COMMENT '昵称',
+    phone VARCHAR(20) DEFAULT NULL COMMENT '手机号',
+    avatar_url VARCHAR(512) DEFAULT NULL COMMENT '头像',
+    address VARCHAR(256) DEFAULT NULL COMMENT '默认收货地址',
+    role VARCHAR(16) NOT NULL DEFAULT 'USER' COMMENT '角色: USER/ADMIN',
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_openid (openid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+
+-- 商品分类表
+CREATE TABLE IF NOT EXISTS t_category (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(32) NOT NULL COMMENT '分类名称',
+    icon VARCHAR(256) DEFAULT NULL COMMENT '分类图标',
+    sort_order INT NOT NULL DEFAULT 0 COMMENT '排序',
+    status TINYINT NOT NULL DEFAULT 1 COMMENT '状态: 1启用 0禁用',
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品分类表';
+
+-- 商品表
+CREATE TABLE IF NOT EXISTS t_product (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    category_id BIGINT NOT NULL COMMENT '分类ID',
+    name VARCHAR(128) NOT NULL COMMENT '商品名称',
+    description TEXT DEFAULT NULL COMMENT '商品描述',
+    price DECIMAL(10,2) NOT NULL COMMENT '售价',
+    original_price DECIMAL(10,2) DEFAULT NULL COMMENT '原价',
+    unit VARCHAR(16) NOT NULL DEFAULT '件' COMMENT '单位',
+    image_url VARCHAR(512) DEFAULT NULL COMMENT '商品图片',
+    status VARCHAR(16) NOT NULL DEFAULT 'ON_SALE' COMMENT '状态: ON_SALE/OFF_SALE',
+    season_tag VARCHAR(16) DEFAULT NULL COMMENT '季节标签: SPRING/SUMMER/AUTUMN/WINTER',
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_category_id (category_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
+
+-- 库存表
+CREATE TABLE IF NOT EXISTS t_inventory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL COMMENT '商品ID',
+    stock_quantity INT NOT NULL DEFAULT 0 COMMENT '当前库存',
+    safety_stock INT NOT NULL DEFAULT 10 COMMENT '安全库存',
+    last_restock_time DATETIME DEFAULT NULL COMMENT '上次补货时间',
+    deleted TINYINT NOT NULL DEFAULT 0,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_product_id (product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='库存表';
+
+-- 订单表
+CREATE TABLE IF NOT EXISTS t_order (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_no VARCHAR(32) NOT NULL COMMENT '订单编号',
+    user_id BIGINT NOT NULL COMMENT '用户ID',
+    total_amount DECIMAL(10,2) NOT NULL COMMENT '订单总金额',
+    status VARCHAR(16) NOT NULL DEFAULT 'PENDING' COMMENT '状态: PENDING/PAID/DELIVERING/COMPLETED/CANCELLED',
+    delivery_address VARCHAR(256) NOT NULL COMMENT '配送地址',
+    delivery_phone VARCHAR(20) NOT NULL COMMENT '配送电话',
+    remark VARCHAR(256) DEFAULT NULL COMMENT '备注',
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_order_no (order_no),
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
+
+-- 订单明细表
+CREATE TABLE IF NOT EXISTS t_order_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL COMMENT '订单ID',
+    product_id BIGINT NOT NULL COMMENT '商品ID',
+    product_name VARCHAR(128) NOT NULL COMMENT '商品名称',
+    product_price DECIMAL(10,2) NOT NULL COMMENT '商品价格',
+    quantity INT NOT NULL COMMENT '数量',
+    subtotal DECIMAL(10,2) NOT NULL COMMENT '小计',
+    INDEX idx_order_id (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单明细表';
+
+-- 配送表
+CREATE TABLE IF NOT EXISTS t_delivery (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL COMMENT '订单ID',
+    status VARCHAR(16) NOT NULL DEFAULT 'PENDING' COMMENT '状态: PENDING/PICKING/DELIVERING/DELIVERED',
+    estimated_time DATETIME DEFAULT NULL COMMENT '预计送达时间',
+    actual_time DATETIME DEFAULT NULL COMMENT '实际送达时间',
+    deleted TINYINT NOT NULL DEFAULT 0,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_order_id (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='配送表';
+
+-- 补货提醒表
+CREATE TABLE IF NOT EXISTS t_restock_alert (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL COMMENT '商品ID',
+    current_stock INT NOT NULL COMMENT '当前库存',
+    safety_stock INT NOT NULL COMMENT '安全库存',
+    suggested_quantity INT NOT NULL COMMENT '建议补货量',
+    status VARCHAR(16) NOT NULL DEFAULT 'PENDING' COMMENT '状态: PENDING/PROCESSED/IGNORED',
+    alert_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '提醒时间',
+    process_time DATETIME DEFAULT NULL COMMENT '处理时间',
+    INDEX idx_product_id (product_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='补货提醒表';
+
+-- 季节性规则表
+CREATE TABLE IF NOT EXISTS t_seasonal_rule (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL COMMENT '商品ID',
+    season VARCHAR(16) NOT NULL COMMENT '季节: SPRING/SUMMER/AUTUMN/WINTER',
+    demand_multiplier DECIMAL(4,2) NOT NULL DEFAULT 1.00 COMMENT '需求系数',
+    auto_adjust_safety_stock TINYINT NOT NULL DEFAULT 1 COMMENT '是否自动调整安全库存',
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_product_season (product_id, season)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='季节性规则表';
+
+-- 销售统计表
+CREATE TABLE IF NOT EXISTS t_sales_stats (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL COMMENT '商品ID',
+    stat_date DATE NOT NULL COMMENT '统计日期',
+    quantity_sold INT NOT NULL DEFAULT 0 COMMENT '销售数量',
+    revenue DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT '销售额',
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_product_date (product_id, stat_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='销售统计表';
+
+-- 初始管理员
+INSERT INTO t_user (nickname, phone, role) VALUES ('超市管理员', '13800000000', 'ADMIN');
+
+-- 初始分类
+INSERT INTO t_category (name, sort_order) VALUES
+('水果', 1), ('蔬菜', 2), ('肉蛋', 3), ('乳品', 4),
+('饮料', 5), ('零食', 6), ('日用品', 7), ('粮油', 8);

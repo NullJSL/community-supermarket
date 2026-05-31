@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="flex-between" style="margin-bottom:20rpx;">
+    <text style="font-size:32rpx;font-weight:bold;">库存列表</text>
+    <view style="display:flex;gap:16rpx;">
+      <view class="btn-outline" style="font-size:24rpx;padding:8rpx 20rpx;" bindtap="toggleAlerts">
+        补货提醒 ({{alerts.length}})
+      </view>
+      <view class="btn-primary" style="font-size:24rpx;padding:8rpx 20rpx;" bindtap="checkRestock">检查补货</view>
+    </view>
+  </view>
+
+  <!-- 补货提醒 -->
+  <view wx:if="{{showAlerts && alerts.length > 0}}">
+    <view class="card alert-card" wx:for="{{alerts}}" wx:key="id">
+      <text style="font-weight:bold;">{{item.productName}}</text>
+      <text style="color:#e64340;"> 当前库存: {{item.currentStock}} / 安全库存: {{item.safetyStock}}</text>
+      <text style="color:#999;"> 建议补货: {{item.suggestedQuantity}}</text>
+    </view>
+  </view>
+
+  <!-- 库存表 -->
+  <view class="card" wx:for="{{inventories}}" wx:key="id">
+    <view class="flex-between">
+      <text>商品ID: {{item.productId}}</text>
+      <view class="{{item.stockQuantity <= item.safetyStock ? 'stock-low' : 'stock-ok'}}">
+        库存: {{item.stockQuantity}}
+      </view>
+    </view>
+    <view class="flex-between" style="margin-top:12rpx;">
+      <text style="font-size:24rpx;color:#999;">安全库存: {{item.safetyStock}}</text>
+      <view class="btn-primary" style="font-size:24rpx;padding:8rpx 24rpx;"
+            bindtap="restock" data-product-id="{{item.productId}}">入库</view>
+    </view>
+  </view>
+</view>

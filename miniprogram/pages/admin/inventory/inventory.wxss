@@ -1,0 +1,10 @@
+.alert-card {
+  border-left: 6rpx solid #e64340;
+}
+.stock-low {
+  color: #e64340;
+  font-weight: bold;
+}
+.stock-ok {
+  color: #07c160;
+}

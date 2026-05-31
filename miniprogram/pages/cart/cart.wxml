@@ -1,0 +1,39 @@
+<view class="container">
+  <view wx:if="{{cartItems.length === 0}}" class="empty-tip">
+    <text>购物车是空的</text>
+    <view class="btn-primary" style="margin-top: 30rpx; display: inline-block;" bindtap="goShopping">去逛逛</view>
+  </view>
+
+  <view wx:else>
+    <view class="flex-between" style="margin-bottom: 20rpx;">
+      <text style="font-size: 32rpx; font-weight: bold;">购物车 ({{totalCount}})</text>
+      <text style="color: #999; font-size: 26rpx;" bindtap="clearAll">清空</text>
+    </view>
+
+    <view class="cart-item card" wx:for="{{cartItems}}" wx:key="productId">
+      <image class="cart-img" src="{{item.imageUrl || '/static/images/default-product.png'}}" mode="aspectFill" />
+      <view class="cart-info">
+        <text class="cart-name">{{item.name}}</text>
+        <text class="price">¥{{item.price}}/{{item.unit}}</text>
+        <view class="cart-bottom">
+          <view class="quantity-picker">
+            <view class="qty-btn" bindtap="onQuantityChange" data-id="{{item.productId}}" data-type="minus">-</view>
+            <text class="qty-num">{{item.quantity}}</text>
+            <view class="qty-btn" bindtap="onQuantityChange" data-id="{{item.productId}}" data-type="plus">+</view>
+          </view>
+          <text class="cart-subtotal">¥{{(item.price * item.quantity).toFixed(2)}}</text>
+        </view>
+      </view>
+      <view class="cart-delete" bindtap="removeItem" data-id="{{item.productId}}">删除</view>
+    </view>
+
+    <!-- 底部结算栏 -->
+    <view class="checkout-bar">
+      <view class="checkout-total">
+        <text>合计：</text>
+        <text class="price" style="font-size: 36rpx;">¥{{totalPrice}}</text>
+      </view>
+      <view class="btn-primary checkout-btn" bindtap="checkout">去结算 ({{totalCount}})</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,34 @@
+<view class="container">
+  <!-- 配送信息 -->
+  <view class="card">
+    <text class="section-title">配送信息</text>
+    <view class="form-item">
+      <text class="label">配送地址</text>
+      <input class="input" placeholder="请输入配送地址" value="{{address}}" bindinput="onAddressInput" />
+    </view>
+    <view class="form-item">
+      <text class="label">联系电话</text>
+      <input class="input" type="number" placeholder="请输入联系电话" value="{{phone}}" bindinput="onPhoneInput" />
+    </view>
+    <view class="form-item">
+      <text class="label">备注</text>
+      <input class="input" placeholder="备注信息（选填）" value="{{remark}}" bindinput="onRemarkInput" />
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="card">
+    <text class="section-title">商品清单</text>
+    <view class="order-item" wx:for="{{cartItems}}" wx:key="productId">
+      <text class="item-name">{{item.name}}</text>
+      <text class="item-qty">x{{item.quantity}}</text>
+      <text class="item-price">¥{{(item.price * item.quantity).toFixed(2)}}</text>
+    </view>
+  </view>
+
+  <!-- 提交 -->
+  <view class="submit-bar">
+    <text class="submit-total">合计：<text class="price" style="font-size: 36rpx;">¥{{totalPrice}}</text></text>
+    <view class="btn-primary submit-btn" bindtap="submitOrder">提交订单</view>
+  </view>
+</view>
